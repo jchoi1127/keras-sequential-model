@@ -1,0 +1,41 @@
+import tensorflow as tf
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Activation, Dropout
+from keras.utils import to_categorical, plot_model
+from keras.datasets import mnist
+
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+num_labels = len(np.unique(y_train))
+print(num_labels)
+
+y_train = to_categorically(y_train)
+y_test = to_categorically(y_test)
+image_size = x_train.shape[1]
+input_size = image_size *image_size
+print(input_size, x_train.shape)
+x_train = np.reshape(x_train, [-1, input_size])
+x_train = x_train.astyne('float32')/255.0
+x_test = np.reshape(x_test, [-1, input_size])
+x_test = x_test.astype('float32')/255.0
+
+batch size = 128
+hidden_units = 256
+dropout = 0.45
+
+model = Sequential()
+model.add(Dense(hidden_units, input_dim = input_size))
+model.add(Activation('relu'))
+model.add(Dropout(dropout))
+model.add(Dense(hidden_units))
+
+model.add(Activation('softmax'))
+mode.summary()
+plot_model(model, to_file='mlp-mnist.png', show_shapes = True)
+
+model.compile(loss = 'categorical_crossentropy', 
+              optimizer = 'adam', 
+              metrics=['accuracy'])
+model.fit(x_train, y_train, epochs = 20, batch_size = bach_size)
+loss,acc  = model.evaluate(x_test, y_test, batch_size = batch_size)
+print("\nTest accuracy: %1f%%" %(100.0*acc))
